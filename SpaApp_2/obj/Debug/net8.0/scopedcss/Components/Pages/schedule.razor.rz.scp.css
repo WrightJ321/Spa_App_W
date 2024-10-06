@@ -1,0 +1,18 @@
+<style type="text/css" >
+.calendar-cell[b-5mlwg94trr] {
+    background-color: #b799be; /* Change this to your desired color */
+    border: 2px solid #b799be;
+    width: 250px; /* Change the cell width here */
+    height: 200px;
+    text-align: center; /* Center horizontally */
+    vertical-align: middle; /* Center vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar-cell:hover[b-5mlwg94trr] {
+    background-color: #b799be; /* Change this to your desired hover color */
+}
+
+</style[b-5mlwg94trr] >

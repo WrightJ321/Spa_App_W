@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaApp_2", "SpaApp_2\SpaApp_2.csproj", "{9E53FD43-754A-4EEB-8E9E-4F8849F8C462}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaApp_2.Client", "SpaApp_2.Client\SpaApp_2.Client.csproj", "{0F049A7D-E6C2-4386-BBF9-7020F675AED9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E53FD43-754A-4EEB-8E9E-4F8849F8C462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E53FD43-754A-4EEB-8E9E-4F8849F8C462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E53FD43-754A-4EEB-8E9E-4F8849F8C462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E53FD43-754A-4EEB-8E9E-4F8849F8C462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F049A7D-E6C2-4386-BBF9-7020F675AED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F049A7D-E6C2-4386-BBF9-7020F675AED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F049A7D-E6C2-4386-BBF9-7020F675AED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F049A7D-E6C2-4386-BBF9-7020F675AED9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2BE1B27-E358-4EA2-92C1-DFA9978AA85C}
+	EndGlobalSection
+EndGlobal

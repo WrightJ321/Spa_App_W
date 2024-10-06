@@ -1,0 +1,289 @@
+﻿@page "/schedule"
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject SpaApp_2.IService.IDayEventService dayEventService
+@inject NavigationManager NavigationManager
+
+@using SpaApp_2.Components.Pages
+@using SpaApp_2.Data
+
+<style type="text/css">
+	#tblParent tbody tr td {
+		width: 200px;
+		height: 200px;
+	}
+
+	#divParent {
+		position: relative;
+	}
+
+	#divModal {
+		z-index: 10;
+		position: absolute;
+		border: 1px inherit #000000;
+		border-radius: 7px;
+		background-color: lavender;
+		left: 40%;
+		top: 20%;
+		width: 400px;
+		min-height: 300px;
+	}
+
+	.modalHeading {
+		text-align: center;
+		font-size: 50px;
+		text-decoration: unset;
+		margin-bottom: 36px;
+	}
+</style>
+
+<h1>Appointment Calendar</h1>
+
+@if (displayModel)
+{
+	<div id="divModal">
+		<div class="container">
+			<div class="panel panel-default">
+				<div class="panel-heading modalHeading">Set Appointment</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-4">
+							<label style ="color:white;font-weight:bolder">From Date : </label>
+						</div>
+						<div class="col-md-8">
+							<input type="date" @bind-value="@dayEvent.FromDate" style="width:100%;" />
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<label style ="color:white;font-weight:bolder">To Date : </label>
+					</div>
+					<div class="col-md-8">
+						<input type="date" @bind-value="@dayEvent.ToDate" style="width:100%;" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<label style="color:white;font-weight:bolder">FirstName : </label>
+					</div>
+					<div class="col-md-8">
+						<input type="text" @bind-value="@dayEvent.FirstName" placeholder="Type here..." />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<label style="color:white;font-weight:bolder">LastName : </label>
+					</div>
+					<div class="col-md-8">
+						<input type="text" @bind-value="@dayEvent.LastName" placeholder="Type here..." />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<label style="color:white;font-weight:bolder">Phone : </label>
+					</div>
+					<div class="col-md-8">
+						<input type="text" @bind-value="@dayEvent.Phone" placeholder="Type here..." />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<label style ="color:white;font-weight:bolder">Note : </label>
+					</div>
+					<div class="col-md-8">
+						<input type="text" @bind-value="@dayEvent.Note" placeholder="Type here..." />
+					</div>
+				</div>
+				<div class="row" style="margin-bottom:10px;">
+					<div class="col-md-6">
+					</div>
+					<div class="col-md-6" style="text-align:right;">
+						<button class="btn btn-outline-success" @onclick="SaveNote" style="float:left;margin-right:5px;">Save</button>
+						<button class="btn btn-outline-dark" @onclick="CloseModel" style="float:left;">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+}
+
+
+<select @onchange="LoadCalendar">
+	@foreach (string monthName in monthNames)
+	{
+		<option>@monthName</option>
+	}
+
+</select>
+<table class="table table-bordered table-hover">
+	<thead>
+		<tr>
+			@for (var dayIndex = 0; dayIndex < days.Count; dayIndex++)
+			{
+				<th>@days[dayIndex]</th>
+			}
+		</tr>
+	</thead>
+	<tbody>
+		@for (var weekIndex = 0; weekIndex < weeks.Count; weekIndex++)
+		{
+			<tr>
+				@for (var dayIndex = 0; dayIndex < weeks[weekIndex].Dates.Count; dayIndex++)
+				{
+					var wIndex = weekIndex;
+					var dIndex = dayIndex;
+					<td class="calendar-cell" @ondblclick="()=>OpenModel(wIndex,dIndex)">
+						<label style="color:dimgray;font-weight:bold">@weeks[weekIndex].Dates[dayIndex].DateValue</label>
+						<br />
+						<label style="color:black;font-weight:bold;font-size:8px">@weeks[weekIndex].Dates[dayIndex].FirstName</label>
+						<label style="color:black;font-weight:bold;font-size:8px">@weeks[weekIndex].Dates[dayIndex].LastName</label>
+						<label style="color:black;font-weight:bold;font-size:8px">@weeks[weekIndex].Dates[dayIndex].Phone</label>
+						<label style="color:black;font-weight:bold;font-size:8px">@weeks[weekIndex].Dates[dayIndex].Note</label>
+						<br />
+						<br />
+						<br />
+						<br />
+						<br />
+						@* Cell Number: [@weekIndex, @dayIndex] *@
+					</td>
+
+				}
+			</tr>
+		}
+	</tbody>
+</table>
+
+
+@code {
+
+	DayEvent dayEvent = new DayEvent()
+		{
+			FromDate = DateTime.Now,
+			ToDate = DateTime.Now,
+			FirstName = "Test",
+			LastName = "Test",
+			Phone = "1234567890",
+			Note = "Test Note"
+
+		};
+	bool displayModel = false;
+	List<string> monthNames = new List<string>();
+	List<string> days = new List<string>();
+	List<WeekClass> weeks = new List<WeekClass>();
+	DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+	DateTime endDate = (new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)).AddMonths(1).AddDays(-1);
+	int selectedWeekIndex = -1;
+	int selectedDayIndex = -1;
+
+
+	protected override void OnInitialized()
+	{
+		monthNames = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames.ToList();
+		GenerateCalendarHead();
+		GenerateCalendarBody();
+
+	}
+	private void LoadCalendar(ChangeEventArgs e)
+	{
+		var month = e.Value.ToString();
+		int monthIndex = DateTime.ParseExact(month, "MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en-GB")).Month;
+		startDate = new DateTime(DateTime.Now.Year, monthIndex, 1);
+		endDate = (new DateTime(DateTime.Now.Year, monthIndex, 1)).AddMonths(1).AddDays(-1);
+
+		GenerateCalendarHead();
+		GenerateCalendarBody();
+
+	}
+	private void GenerateCalendarBody()
+	{
+		weeks = new List<WeekClass>();
+		var dayEvents = dayEventService.GetEvents(startDate, endDate);
+
+		int flag = 0;
+		WeekClass week = new WeekClass();
+		List<DayEvent> dates = new List<DayEvent>();
+		var totalDays = (int)(endDate - startDate).TotalDays;
+		int countDays = 0;
+		for (var dt = startDate; dt <= endDate; dt = dt.AddDays(1))
+		{
+			flag++;
+			var currentObject = dayEvents.Find(x => x.EventDate.ToString("dd-MMM-yyyy") == dt.ToString("dd-MMM-yyyy"));
+
+			dates.Add(new DayEvent()
+				{
+					DayEventId = currentObject == null ? 0 : currentObject.DayEventId,
+					DateValue = dt.ToString("dd-MMM-yyyy"),
+					DayName = dt.ToString("dddd"),
+					FirstName = currentObject == null ? "" : currentObject.FirstName,
+					LastName = currentObject == null ? "" : currentObject.LastName,
+					Phone = currentObject == null ? "" : currentObject.Phone,
+					Note = currentObject == null ? "" : currentObject.Note
+				});
+			if (flag == 7)
+			{
+				week = new WeekClass();
+				week.Dates = dates;
+				weeks.Add(week);
+
+				dates = new List<DayEvent>();
+				flag = 0;
+
+			}
+			if (countDays == totalDays)
+			{
+				week = new WeekClass();
+				week.Dates = dates;
+				weeks.Add(week);
+				break;
+			}
+			countDays++;
+		}
+
+	}
+
+	private void GenerateCalendarHead()
+	{
+		var day1 = new List<string>();
+
+		for (var dt = startDate; dt <= endDate; dt = dt.AddDays(1))
+		{
+			day1.Add(dt.ToString("dddd"));
+		}
+		days = day1.Distinct().ToList();
+	}
+	private void CloseModel()
+	{
+		displayModel = false;
+	}
+	private void OpenModel(int wIndex, int dIndex)
+	{
+		selectedWeekIndex = wIndex;
+		selectedDayIndex = dIndex;
+
+		var dayEventObj = dayEventService.GetEvent(Convert.ToDateTime(weeks[wIndex].Dates[dIndex].DateValue));
+		dayEvent = dayEventObj;
+		displayModel = true;
+	}
+	private void SaveNote()
+	{
+		dayEvent = dayEventService.SaveOrUpdate(dayEvent);
+		if(dayEvent.DayEventId > 0)
+		{
+			weeks[selectedWeekIndex].Dates[selectedDayIndex].DayEventId = dayEvent.DayEventId;
+			weeks[selectedWeekIndex].Dates[selectedDayIndex].FirstName = dayEvent.FirstName;
+			weeks[selectedWeekIndex].Dates[selectedDayIndex].LastName = dayEvent.LastName;
+			weeks[selectedWeekIndex].Dates[selectedDayIndex].Phone = dayEvent.Phone;
+			weeks[selectedWeekIndex].Dates[selectedDayIndex].Note = dayEvent.Note;
+
+			ResetModel();
+		}	
+	}
+	private void ResetModel()
+	{
+		displayModel = false;
+		selectedDayIndex = -1;
+		selectedWeekIndex = -1;
+	}
+}

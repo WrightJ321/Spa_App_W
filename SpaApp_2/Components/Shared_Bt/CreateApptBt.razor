@@ -1,0 +1,13 @@
+﻿@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<button style="background-color:#b799be;color:white;" @onclick="CreateAppt" class="btn btn-light">Book Now!</button>
+
+
+@code {
+	void CreateAppt()
+	{
+		NavigationManager.NavigateTo("/schedule");
+	}
+
+}

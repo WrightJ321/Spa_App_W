@@ -1,0 +1,290 @@
+﻿@page "/"
+@using SpaApp_2.Components.Shared_Bt
+@using SpaApp_2.Data
+@using SpaApp_2.Services
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+@inject NavigationManager NavigationManager
+
+<PageTitle>Home</PageTitle>
+<style>
+	.tab-container {
+		display: flex; /* Use Flexbox */
+		justify-content: center; /* Center content horizontally */
+	}
+
+	.tab {
+		overflow: hidden;
+		background-color: white;
+	}
+
+		.tab button {
+			background-color: inherit;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			margin: 30px; /* Space between buttons */
+			transition: 0.3s;
+			font-size: 20px;
+		}
+
+			.tab button:hover {
+				background-color: #ddd;
+			}
+
+	.tabcontent {
+		padding: 6px 12px;
+		border: 1px solid black;
+		border: none;
+	}
+
+	.service-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+		gap: 20px; /* Space between items */
+	}
+
+	.service-item {
+		border: 1px solid #ccc; /* Item border */
+		border-radius: 5px; /* Rounded corners */
+		padding: 10px; /* Inner padding */
+		text-align: center; /* Center text */
+		background-color: #f9f9f9; /* Background color */
+		transition: box-shadow 0.3s; /* Smooth shadow transition */
+	}
+
+		.service-item:hover {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
+		}
+
+</style>
+
+<h1>Welcome To On Cloud Nine Day Spa</h1>
+<p>Explore our services and book your appointment today!</p>
+
+<div class="tab-container">
+	<div class="tab">
+		<button style="@(bodyTreatment ? "background-color:#b799be;color:white;" : "")" @onclick="(x => DisplayTab(1))">Body Treatments</button>
+		<button style="@(massages ? "background-color:#b799be;color:white;" : "")" @onclick="(x => DisplayTab(2))">Massages</button>
+		<button style="@(specialMas ? "background-color:#b799be;color:white;" : "")" @onclick="(x => DisplayTab(3))">Specialty Massages</button>
+		<button style="@(skinCare ? "background-color:#b799be;color:white;" : "")" @onclick="(x => DisplayTab(4))">Skin Care</button>
+		<button style="@(wax ? "background-color:#b799be;color:white;" : "")" @onclick="(x => DisplayTab(5))">Waxing</button>
+	</div>
+</div>
+
+@if (bodyTreatment)
+{
+	<div class="tabcontent">
+		<h3>Body Treatments</h3>
+		<div class="service-grid">
+			@foreach (var service in categorizedServices["Body Treatments"])
+			{
+				<div class="service-item">
+					<h4>@service.ServiceName</h4>
+					<p>@service.Description</p>
+					<p>@service.Price.ToString("C")</p>
+					<SpaApp_2.Components.Shared_Bt.CreateApptBt></SpaApp_2.Components.Shared_Bt.CreateApptBt>
+				</div>
+			}
+		</div>
+	</div>
+}
+@if (massages)
+{
+	<div class="tabcontent">
+		<h3>Massages</h3>
+		<div class="service-grid">
+			@foreach (var service in categorizedServices["Massages"])
+			{
+				<div class="service-item">
+					<h4>@service.ServiceName</h4>
+					<p>@service.Description</p>
+					<p>@service.Price.ToString("C")</p>
+					<SpaApp_2.Components.Shared_Bt.CreateApptBt></SpaApp_2.Components.Shared_Bt.CreateApptBt>
+				</div>
+			}
+		</div>
+	</div>
+}
+@if (specialMas)
+{
+	<div class="tabcontent">
+		<h3>Specialty Massages</h3>
+		<div class="service-grid">
+			@foreach (var service in categorizedServices["Specialty Massages"])
+			{
+				<div class="service-item">
+					<h4>@service.ServiceName</h4>
+					<p>@service.Description</p>
+					<p>@service.Price.ToString("C")</p>
+					<SpaApp_2.Components.Shared_Bt.CreateApptBt></SpaApp_2.Components.Shared_Bt.CreateApptBt>
+				</div>
+			}
+		</div>
+	</div>
+}
+@if (skinCare)
+{
+	<div class="tabcontent">
+		<h3>Skin Care</h3>
+		<div class="service-grid">
+			@foreach (var service in categorizedServices["Skin Care"])
+			{
+				<div class="service-item">
+					<h4>@service.ServiceName</h4>
+					<p>@service.Description</p>
+					<p>@service.Price.ToString("C")</p>
+					<SpaApp_2.Components.Shared_Bt.CreateApptBt></SpaApp_2.Components.Shared_Bt.CreateApptBt>
+				</div>
+			}
+		</div>
+	</div>
+}
+@if (wax)
+{
+	<div class="tabcontent">
+		<h3>Waxing</h3>
+		<div class="service-grid">
+			@foreach (var service in categorizedServices["Waxing"])
+			{
+				<div class="service-item">
+					<h4>@service.ServiceName</h4>
+					<p>@service.Description</p>
+					<p>@service.Price.ToString("C")</p>
+					<SpaApp_2.Components.Shared_Bt.CreateApptBt></SpaApp_2.Components.Shared_Bt.CreateApptBt>
+				</div>
+			}
+		</div>
+	</div>
+}
+<img src="images/o.jpg" alt="Spa Image" style="width: 750px; height: 700;">
+
+@code {
+	private bool bodyTreatment = true;
+	private bool massages = false;
+	private bool specialMas = false;
+	private bool skinCare = false;
+	private bool wax = false;
+	private Dictionary<string, List<Service>> categorizedServices;
+	private List<Service> services;
+	private string currentTabName;
+
+	public void DisplayTab(int tabNumber)
+	{
+		switch (tabNumber)
+		{
+			case 1:
+				this.bodyTreatment = true;
+				this.massages = false;
+				this.specialMas = false;
+				this.skinCare = false;
+				this.wax = false;
+				this.currentTabName = "Body Treatments";
+				this.services = categorizedServices["Body Treatments"];
+				break;
+			case 2:
+				this.bodyTreatment = false;
+				this.massages = true;
+				this.specialMas = false;
+				this.skinCare = false;
+				this.wax = false;
+				this.currentTabName = "Massages";
+				this.services = categorizedServices["Massages"];
+				break;
+			case 3:
+				this.bodyTreatment = false;
+				this.massages = false;
+				this.specialMas = true;
+				this.skinCare = false;
+				this.wax = false;
+				this.currentTabName = "Specialty Massages";
+				this.services = categorizedServices["Specialty Massages"];
+				break;
+			case 4:
+				this.bodyTreatment = false;
+				this.massages = false;
+				this.specialMas = false;
+				this.skinCare = true;
+				this.wax = false;
+				this.currentTabName = "Skin Care";
+				this.services = categorizedServices["Skin Care"];
+				break;
+			case 5:
+				this.bodyTreatment = false;
+				this.massages = false;
+				this.specialMas = false;
+				this.skinCare = false;
+				this.wax = true;
+				this.currentTabName = "Waxing";
+				this.services = categorizedServices["Waxing"];
+				break;
+		}
+	}
+
+	protected override void OnInitialized()
+	{
+		categorizedServices = new Dictionary<string, List<Service>>
+		{
+			{ "Body Treatments", new List<Service>
+				{
+					new Service { ServiceID = 1, ServiceName = "Endermologie", Description = "35-40 mins", Price = 85 },
+					new Service { ServiceID = 2, ServiceName = "Endermawear", Description = "Session for Body Slimming", Price = 60 },
+					new Service { ServiceID = 3, ServiceName = "Slenderquest Body Wraps", Description = "2 hr session", Price = 95 },
+					new Service { ServiceID = 4, ServiceName = "Body Scrub", Description = "50 mins treatment", Price = 75 }
+				}
+			},
+			{ "Massages", new List<Service>
+				{
+					new Service { ServiceID = 5, ServiceName = "Swedish Massage", Description = "60 mins relaxation", Price = 80 },
+					new Service { ServiceID = 6, ServiceName = "Deep Tissue Massage", Description = "60 mins therapy", Price = 95 },
+					new Service { ServiceID = 7, ServiceName = "Therapeutic Massage", Description = "90 mins personalized therapy", Price = 120 },
+					new Service { ServiceID = 8, ServiceName = "Couples Massage", Description = "60 mins for two", Price = 150 },
+					new Service { ServiceID = 9, ServiceName = "Couples Therapeutic Massage", Description = "90 mins for two", Price = 230 }
+				}
+			},
+			{ "Specialty Massages", new List<Service>
+				{
+					new Service { ServiceID = 10, ServiceName = "Sports Massage", Description = "Focus on muscle recovery", Price = 85 },
+					new Service { ServiceID = 11, ServiceName = "Pregnancy Massage", Description = "60 mins for expectant mothers", Price = 85 },
+					new Service { ServiceID = 12, ServiceName = "Lymphatic Massage", Description = "60 mins treatment", Price = 85 },
+					new Service { ServiceID = 13, ServiceName = "Hot Stone Massage", Description = "60 mins treatment", Price = 75 },
+					new Service { ServiceID = 14, ServiceName = "30 min Massage", Description = "Quick relaxation session", Price = 45 }
+				}
+			},
+			{ "Skin Care", new List<Service>
+				{
+					new Service { ServiceID = 15, ServiceName = "Deep Cleaning Facial", Description = "45-60 mins", Price = 65 },
+					new Service { ServiceID = 16, ServiceName = "Chemical Peel", Description = "60 mins treatment", Price = 110 },
+					new Service { ServiceID = 17, ServiceName = "Micro Dermabrasion", Description = "60 mins treatment", Price = 110 },
+					new Service { ServiceID = 18, ServiceName = "Classic European Facial", Description = "60 mins treatment", Price = 75 },
+					new Service { ServiceID = 19, ServiceName = "Refresher Facial", Description = "30 mins quick treatment", Price = 60 },
+					new Service { ServiceID = 20, ServiceName = "Back Facial", Description = "45 mins treatment", Price = 55 },
+					new Service { ServiceID = 21, ServiceName = "Oxygen Facial", Description = "45-60 mins treatment", Price = 85 },
+					new Service { ServiceID = 22, ServiceName = "Hydro Jellie Facial", Description = "45-60 mins treatment", Price = 85 }
+				}
+			},
+			{ "Waxing", new List<Service>
+				{
+					new Service { ServiceID = 23, ServiceName = "Brow Wax", Description = "Quick brow shaping", Price = 14 },
+					new Service { ServiceID = 24, ServiceName = "Upper Lip Wax", Description = "Quick upper lip wax", Price = 6 },
+					new Service { ServiceID = 25, ServiceName = "Chin Wax", Description = "Quick chin wax", Price = 6 },
+					new Service { ServiceID = 26, ServiceName = "Sideburns Wax", Description = "Quick sideburns wax", Price = 9 },
+					new Service { ServiceID = 27, ServiceName = "Hairline Wax", Description = "Quick hairline wax", Price = 10 },
+					new Service { ServiceID = 28, ServiceName = "Full Face Wax", Description = "Complete face wax", Price = 35 },
+					new Service { ServiceID = 29, ServiceName = "Under Arms Wax", Description = "Quick underarm wax", Price = 17 },
+					new Service { ServiceID = 30, ServiceName = "Chest Wax", Description = "Full chest wax", Price = 45 },
+					new Service { ServiceID = 31, ServiceName = "Back Wax", Description = "Full back wax", Price = 45 },
+					new Service { ServiceID = 32, ServiceName = "Half Arm Wax", Description = "Waxing from elbow down", Price = 25 },
+					new Service { ServiceID = 33, ServiceName = "Full Arm Wax", Description = "Full arm waxing", Price = 35 },
+					new Service { ServiceID = 34, ServiceName = "Half Leg Wax", Description = "Waxing from knee down", Price = 30 },
+					new Service { ServiceID = 35, ServiceName = "Full Leg Wax", Description = "Full leg waxing", Price = 60 }
+				}
+			}
+		};
+
+		// Initialize the first tab's services
+		services = categorizedServices["Body Treatments"];
+		currentTabName = "Body Treatments";
+	}
+}
